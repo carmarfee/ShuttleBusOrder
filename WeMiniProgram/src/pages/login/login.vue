@@ -1,13 +1,19 @@
 <template>
 <div class="container">
-    <div class="bg bg-color-base margin-b20"></div>
+    <div class=" bg margin-b30">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+        <div class="bubble bubble-3"></div>
+        <div class="bubble bubble-4"></div>
+        <div class="bubble bubble-5"></div>
+        <div class="bubble bubble-6"></div>
+    </div>
 
     <div class="tab vs-row vs-align-center">
         <image class="tab-bg" src="@/static/images/login.png" mode=""></image>
         <div class="vs-row vs-align-center">
             <div class="vs-column vs-align-center margin-r40">
                 <span class="font-80 font-weight-500 margin-b20">智约班车</span>
-                <span class="font-20 color-blue">便捷出行，畅通无忧</span>
             </div>
         </div>
     </div>
@@ -15,12 +21,12 @@
     <div class="login margin-b80">
         <div class="input vs-row vs-align-center margin-b40">
             <image class="input-icon margin-r20" src="@/static/images/id.png" mode=""></image>
-            <input class="vs-flex-item color-base font-30" type="span" v-model="id" :maxlength="11"
+            <input class="vs-flex-item color-black-9 font-30" type="span" v-model="id" :maxlength="11"
                 placeholder="请输入您的学工号" placeholder-class="input-placeholder" />
         </div>
         <div class="input vs-row vs-align-center margin-b40">
             <image class="input-icon margin-r20" src="@/static/images/pwd.png" mode=""></image>
-            <input class="vs-flex-item color-base font-30" type="span" password v-model="password"
+            <input class="vs-flex-item color-black-9 font-30" type="span" password v-model="password"
                 placeholder="请输入您的登录密码" placeholder-class="input-placeholder" />
         </div>
     </div>
@@ -49,10 +55,16 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/userStore';
 
 // 登录表单数据
 const id = ref('');
 const password = ref('');
+
+const userStore = useUserStore();
+
+//-------------------------------分割线--------------------------------
+
 
 // 用户登录方法
 const userLogin = () => {
@@ -63,8 +75,7 @@ const userLogin = () => {
         });
         return;
     }
-    console.log('用户登录', { id: id.value, password: password.value });
-    // 这里可以添加用户登录的逻辑
+    userStore.actions.LoginIn({ id: id.value, password: password.value });
 };
 // 游客登录方法
 const guestLogin = () => {
@@ -83,6 +94,88 @@ const guestLogin = () => {
     position: relative;
     width: 750rpx;
     height: 400rpx;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+}
+
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+}
+
+.bubble-1 {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    right: -30px;
+    animation-delay: 0s;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.bubble-2 {
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    right: 40px;
+    animation-delay: 1s;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.bubble-3 {
+    width: 20px;
+    height: 20px;
+    top: 60px;
+    right: 80px;
+    animation-delay: 2s;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.bubble-4 {
+    width: 80px;
+    height: 80px;
+    bottom: -40px;
+    left: -40px;
+    animation-delay: 0.5s;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bubble-5 {
+    width: 30px;
+    height: 30px;
+    bottom: 40px;
+    left: 60px;
+    animation-delay: 3s;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.bubble-6 {
+    width: 15px;
+    height: 15px;
+    top: 50%;
+    left: 20px;
+    animation-delay: 4s;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.7;
+    }
+
+    33% {
+        transform: translateY(-10px) rotate(120deg);
+        opacity: 1;
+    }
+
+    66% {
+        transform: translateY(5px) rotate(240deg);
+        opacity: 0.8;
+    }
 }
 
 .tab {
@@ -134,8 +227,8 @@ const guestLogin = () => {
     }
 
     &-placeholder {
-        color: #5064eb;
-        opacity: 0.7;
+        color: #52545f;
+        opacity: 0.5;
     }
 }
 
@@ -396,7 +489,7 @@ const guestLogin = () => {
 }
 
 .color-black-9 {
-    color: #999;
+    color: #5b4f4f;
 }
 
 // 字体宽度

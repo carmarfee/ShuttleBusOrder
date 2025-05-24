@@ -10,6 +10,9 @@ onLaunch(() => {
 });
 onShow(() => {
     console.log("App Show");
+    uni.hideTabBar({
+        animation: false
+    })
 });
 
 onHide(() => {
@@ -20,4 +23,9 @@ onHide(() => {
 
 <style lang="scss">
 @import "uview-plus/index.scss";
+@import "./static/css/iconfont.css";
+
+page {
+    background-color: rgb(247, 247, 255);
+}
 </style>
