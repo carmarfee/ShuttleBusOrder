@@ -79,10 +79,12 @@ const goToNext = (item: any) => {
     }
 }
 
-
+.u-tabbar__content{
+    height: 60px !important;
+}
 .u-tabbar-item {
     &__text {
-        font-size: 4px !important;
+        font-size: 10px !important;
         color: #4e5161;
     }
 }

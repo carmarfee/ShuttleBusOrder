@@ -19,11 +19,11 @@ export const setupRouteGuard = () => {
                 console.log('当前页面', currentPage)
                 console.log('目标页面', targetPage)
                 // 判断是否登录
-                if (!userStore.getters.isLogin && !whitePageList.includes(targetPage)) {
-                    console.log(userStore.state.token)
-                    // 如果没有登录，跳转到登录页
-                    args.url = loginPage;
-                }
+                // if (!userStore.getters.isLogin && !whitePageList.includes(targetPage)) {
+                //     console.log(userStore.state.token)
+                //     // 如果没有登录，跳转到登录页
+                //     args.url = loginPage;
+                // }
                 console.log('继续跳转')
                 console.log('目标页面', args.url)
             },

@@ -5,8 +5,8 @@
       <up-col span="12">
         <div class="user-header">
           <div class="user-info">
-            <h2 class="greeting">你好，{{ userInfo.name }}</h2>
-            <p class="student-id">学号：{{ userInfo.id }}</p>
+            <h2 class="greeting">你好，{{ userInfo.name }}{{ userInfo.role }}</h2>
+            <p class="student-id">学工号：{{ userInfo.id }}</p>
             <div class="stats">
               <div class="stat-item">
                 <span class="stat-label">本月取消：</span>
@@ -20,78 +20,22 @@
         </div>
       </up-col>
     </up-row>
-    <up-row justify="space-between">
-      <up-col span="6">
-        <div class="card card-1">
-          <div class="card-1-icon">
-            <up-icon size="60" name="a-Group177" customPrefix="custom-icon">
-            </up-icon>
-          </div>
-          <div class="card-1-info">
-            <span>
-              立即预约
-            </span>
-            <br>
-            <span>
-              选择班车快速预约
-            </span>
-          </div>
-        </div>
-      </up-col>
-      <up-col span="6">
-        <div class="card card-1">
-          <div class="card-1-icon"><up-icon size="60" name="saomashibie" customPrefix="custom-icon">
-            </up-icon></div>
-          <div class="card-1-info"><span>
-              扫码乘车
-            </span>
-            <br>
-            <span>
-              出示二维码乘车
-            </span>
-          </div>
-        </div>
+    <span style="margin-left: 20rpx;font-weight: bold;">快捷入口</span>
+    <up-row>
+      <up-col span="12">
+        <accessbar></accessbar>
       </up-col>
     </up-row>
-    <up-row justify="space-between">
-      <up-col span="4">
-        <div class="card card-2">
-          <div class="card-2-icon">
-            <up-icon size="50" name="huiyixuzhi" customPrefix="custom-icon">
-            </up-icon>
-          </div>
-          <div class="card-2-info">预约须知</div>
-        </div>
-      </up-col>
-      <up-col span="4">
-        <div class="card card-2">
-          <div class="card-2-icon">
-            <up-icon size="40" name="xiaoxi" customPrefix="custom-icon" customStyle="padding: 10rpx;">
-            </up-icon>
-          </div>
-          <div class="card-2-info">消息中心</div>
-        </div>
-      </up-col>
-      <up-col span="4">
-        <div class="card card-2">
-          <div class="card-2-icon">
-            <up-icon size="40" name="a-kefufuwu" customPrefix="custom-icon" customStyle="padding: 10rpx;">
-            </up-icon>
-          </div>
-          <div class="card-2-info">联系客服</div>
-        </div>
+    <span style="margin-left: 20rpx;font-weight: bold;">班车动态</span>
+    <up-row>
+      <up-col span="12">
+        <dynamiccard></dynamiccard>
+        <dynamiccard></dynamiccard>
+        <dynamiccard></dynamiccard>
       </up-col>
     </up-row>
   </div>
-  <div class="card card-3">
-    <div class="card-3-title">
-      班车动态
-    </div>
-    <up-divider></up-divider>
-    <div class="card-3-info">
-      <span>NoData</span>
-    </div>
-  </div>
+  
   <tabbar></tabbar>
 </div>
 </template>
@@ -99,18 +43,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import tabbar from "@/components/tabbar.vue";
+import accessbar from "@/components/accessbar.vue";
+import dynamiccard from "@/components/dynamiccard.vue";
 
 const title = ref('班车动态');
 
 const userInfo = ref({
   name: '张小明',
   id: '2025302181111',
+  role: '同学',
   totalappointments: 3,
   cancelappointments: 1,
   creditStatus: '信用良好'
 })
+const show = ref(false);
 
 //-------------------------------分割线--------------------------------
+
+// 定义方法  
+function openNote() {
+  show.value = true;
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -119,31 +73,48 @@ const userInfo = ref({
   flex-direction: column;
   align-items: center;
 
-  &-1 {
-    height: 200rpx;
+  &-rule {
     margin: 20rpx;
+    height: 250rpx;
+    border: #465bd0 1px solid;
     border-radius: 10px;
-    box-shadow: 4px 4px 18px rgba(173, 172, 172, 0.2),
-      -4px -4px 18px rgba(162, 160, 160, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &-title {
+      width: 100%;
+      padding-left: 30rpx;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: left;
+    }
 
     &-info {
-      text-align: center;
+      text-align: left;
+      padding-left: 35rpx;
+      font-size: 14px;
+      color: #333;
     }
   }
 
-  &-2 {
+  &-access {
     height: 140rpx;
     margin: 20rpx;
     border-radius: 10px;
+    background-image: linear-gradient(to top, #c471f5 0%, #fa71cd 100%);
     box-shadow: 4px 4px 18px rgba(173, 172, 172, 0.2),
       -4px -4px 18px rgba(162, 160, 160, 0.2);
 
     &-info {
+      font-size: smaller;
+      font-weight: bold;
       text-align: center;
     }
   }
 
-  &-3 {
+  &-dynamic {
     height: 400rpx;
     margin: 20rpx;
     border-radius: 10px;
@@ -159,6 +130,7 @@ const userInfo = ref({
     }
 
     &-info {
+      font-size: small;
       text-align: center;
     }
   }
@@ -195,6 +167,7 @@ const userInfo = ref({
     color: #4e5161;
   }
 }
+
 
 //--------------------------------分割线--------------------------------
 .user-header {
@@ -268,5 +241,4 @@ const userInfo = ref({
   font-size: 14px;
   font-weight: 500;
 }
-
-//--------------------------------分割线--------------------------------</style>
+</style>

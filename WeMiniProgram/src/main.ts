@@ -2,7 +2,7 @@ import { createSSRApp } from "vue";
 import App from "./App.vue";
 import uviewPlus from 'uview-plus';
 import * as Pinia from 'pinia';
-import { setupRouteGuard } from "./utils/routeGuard";
+// import { setupRouteGuard } from "./utils/routeGuard";
 
 
 export function createApp() {
@@ -15,5 +15,5 @@ export function createApp() {
   };
 }
 
-setupRouteGuard();
+// setupRouteGuard();
 
