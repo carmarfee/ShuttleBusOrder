@@ -73,7 +73,7 @@ const handleCardClick = () => {
 
     // 跳转到详情页
     uni.navigateTo({
-        url: `/pages/notice-detail/index?id=${props.noticeData.id}`
+        url: `/pages/dynamic/dynamic?id=1`
     })
 }
 </script>

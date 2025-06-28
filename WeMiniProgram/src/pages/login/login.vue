@@ -18,11 +18,27 @@
         </div>
     </div>
 
+    <!-- 用户类型选择 -->
+    <div class="user-type-section margin-b40">
+        <div class="user-type-title margin-b20">
+            <span class="color-black-6 font-28">选择用户类型</span>
+        </div>
+        <div class="user-type-select">
+            <up-picker :show="showPicker" :columns="pickerColumns" @confirm="onPickerConfirm"
+                @cancel="showPicker = false" :default-index="[0]"></up-picker>
+            <div class="select-input vs-row vs-align-center" @click="showPicker = true">
+                <up-icon :name="getCurrentUserType().icon" color="#5064eb" size="18" class="margin-r15"></up-icon>
+                <span class="vs-flex-item color-black-9 font-30">{{ getCurrentUserType().label }}</span>
+                <up-icon name="arrow-down" :color="showPicker ? '#5064eb' : '#666'" size="16"></up-icon>
+            </div>
+        </div>
+    </div>
+
     <div class="login margin-b80">
         <div class="input vs-row vs-align-center margin-b40">
             <image class="input-icon margin-r20" src="@/static/images/id.png" mode=""></image>
             <input class="vs-flex-item color-black-9 font-30" type="span" v-model="id" :maxlength="11"
-                placeholder="请输入您的学工号" placeholder-class="input-placeholder" />
+                :placeholder="getPlaceholderText()" placeholder-class="input-placeholder" />
         </div>
         <div class="input vs-row vs-align-center margin-b40">
             <image class="input-icon margin-r20" src="@/static/images/pwd.png" mode=""></image>
@@ -39,12 +55,11 @@
         <span class="color-base font-28 hover-text">忘记密码？</span>
     </div>
 
-
     <div class="other">
         <up-divider text="更多登录方式"></up-divider>
 
         <div class="other-items vs-row vs-align-center vs-space-center">
-            <div class="guest-button vs-row vs-align-center vs-space-center hover-effect">
+            <div class="guest-button vs-row vs-align-center vs-space-center hover-effect" @click="guestLogin">
                 <image class="guest-icon margin-r10" src="@/static/images/guest.png" mode=""></image>
                 <span class="color-black-6 font-30">游客登录</span>
             </div>
@@ -60,11 +75,61 @@ import { useUserStore } from '@/stores/userStore';
 // 登录表单数据
 const id = ref('');
 const password = ref('');
+const selectedUserType = ref<'student' | 'teacher' | 'driver' | 'admin'>('student'); // 默认选择学生用户
+const showPicker = ref(false); // 控制下拉选择器显示
 
 const userStore = useUserStore();
 
+// 用户类型配置
+const userTypes = [
+    { label: '学生用户', value: 'student', icon: 'account' },
+    { label: '教师用户', value: 'teacher', icon: 'account-circle' },
+    { label: '班车驾驶员', value: 'driver', icon: 'car' },
+    { label: '管理员', value: 'admin', icon: 'setting' }
+];
+
+// 下拉选择器的列配置
+const pickerColumns = [
+    userTypes.map(item => item.label)
+];
+
 //-------------------------------分割线--------------------------------
 
+// 获取当前选中的用户类型信息
+const getCurrentUserType = () => {
+    return userTypes.find(item => item.value === selectedUserType.value) || userTypes[0];
+};
+
+// 下拉选择器确认选择
+const onPickerConfirm = (e: { indexs: number[] }) => {
+    const selectedIndex = e.indexs[0];
+    const selectedType = userTypes[selectedIndex];
+    selectedUserType.value = selectedType.value as 'student' | 'teacher' | 'driver' | 'admin';
+    showPicker.value = false;
+
+    // 切换用户类型时清空输入框
+    id.value = '';
+    password.value = '';
+};
+
+// 选择用户类型（保留原方法以防其他地方调用）
+const selectUserType = (type: 'student' | 'teacher' | 'driver' | 'admin') => {
+    selectedUserType.value = type;
+    // 切换用户类型时清空输入框
+    id.value = '';
+    password.value = '';
+};
+
+// 根据用户类型获取占位符文本
+const getPlaceholderText = () => {
+    const placeholderMap = {
+        student: '请输入您的学号',
+        teacher: '请输入您的工号',
+        driver: '请输入您的驾驶员编号',
+        admin: '请输入您的管理员账号'
+    };
+    return placeholderMap[selectedUserType.value as 'student' | 'teacher' | 'driver' | 'admin'] || '请输入您的账号';
+};
 
 // 用户登录方法
 const userLogin = () => {
@@ -75,12 +140,32 @@ const userLogin = () => {
         });
         return;
     }
-    userStore.actions.LoginIn({ id: id.value, password: password.value });
+
+    // 传递用户类型给登录方法
+    userStore.actions.LoginIn({
+        id: id.value,
+        password: password.value,
+        role: selectedUserType.value
+    });
 };
+
 // 游客登录方法
 const guestLogin = () => {
     console.log('游客登录');
-    // 这里可以添加游客登录的逻辑
+    uni.showToast({
+        title: '正在以游客身份登录...',
+        icon: 'loading'
+    });
+
+    // 模拟登录延时
+    setTimeout(() => {
+        // 这里可以添加游客登录的逻辑
+        userStore.actions.LoginIn({
+            id: 'guest',
+            password: '',
+            role: 'guest'
+        });
+    }, 1000);
 };
 </script>
 
@@ -197,6 +282,40 @@ const guestLogin = () => {
         width: 440rpx;
         height: 365rpx;
     }
+}
+
+/* 用户类型选择样式 */
+.user-type-section {
+    padding: 0 60rpx;
+    margin-top: 40rpx;
+}
+
+.user-type-title {
+    text-align: center;
+}
+
+.user-type-select {
+    width: 100%;
+}
+
+.select-input {
+    height: 90rpx;
+    padding: 0 30rpx;
+    background-color: rgba(80, 100, 235, 0.1);
+    border-radius: 20rpx;
+    border: 2rpx solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:active {
+        background-color: rgba(80, 100, 235, 0.15);
+        border-color: #5064eb;
+        box-shadow: 0 0 10rpx rgba(80, 100, 235, 0.2);
+    }
+}
+
+.margin-r15 {
+    margin-right: 15rpx;
 }
 
 .line {
@@ -397,7 +516,6 @@ const guestLogin = () => {
         }
     }
 }
-
 
 .font-30 {
     font-style: normal;

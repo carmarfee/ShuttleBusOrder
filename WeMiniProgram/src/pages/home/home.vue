@@ -45,8 +45,7 @@ import { ref } from "vue";
 import tabbar from "@/components/tabbar.vue";
 import accessbar from "@/components/accessbar.vue";
 import dynamiccard from "@/components/dynamiccard.vue";
-
-const title = ref('班车动态');
+import { onLoad } from "@dcloudio/uni-app";
 
 const userInfo = ref({
   name: '张小明',
@@ -56,14 +55,13 @@ const userInfo = ref({
   cancelappointments: 1,
   creditStatus: '信用良好'
 })
-const show = ref(false);
-
 //-------------------------------分割线--------------------------------
 
 // 定义方法  
-function openNote() {
-  show.value = true;
-}
+
+onLoad(() => {
+  uni.hideTabBar();
+});
 
 </script>
 

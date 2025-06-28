@@ -10,10 +10,10 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/home/home"
+			"path": "pages/login/login"
 		},
 		{
-			"path": "pages/login/login"
+			"path": "pages/home/home"
 		},
 		{
 			"path": "pages/appointment/appointment"
@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "pages/user/user"
+		},
+		{
+			"path": "pages/dynamic/dynamic"
 		}
 	],
 	"globalStyle": {
@@ -49,5 +52,4 @@
 			}
 		]
 	}
-	
 }

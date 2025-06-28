@@ -19,10 +19,10 @@
 
         <div class="item item--3" @tap="handleItemClick(2)" :class="{ 'item-active': activeIndex === 2 }">
             <div class="icon-wrapper">
-                <up-icon name="xiaoxi" customPrefix="custom-icon" size="40" color="rgba(66,193,110,1)"></up-icon>
+                <up-icon name="hangchengxinxi" customPrefix="custom-icon" size="40" color="rgba(150,193,183,1)"></up-icon>
             </div>
-            <p class="quantity">消息中心</p>
-            <p class="description">消息通知中心</p>
+            <p class="quantity">我的行程</p>
+            <p class="description">查看我的行程</p>
         </div>
 
         <div class="item item--4" @tap="handleItemClick(3)" :class="{ 'item-active': activeIndex === 3 }">
@@ -34,74 +34,85 @@
         </div>
     </div>
 
-    <u-modal :content="content" title="预约规则" :show="show" @confirm="() => show = false">
+    <u-modal title="预约规则" :show="showRule" @confirm="() => showRule = false">
         <div class="card-rule-info">
             <p>1. 每位学生每月可预约班车次数为2次，超过2次将无法预约。</p>
             <p>2. 每次预约需提前24小时进行，预约时间截止到班车发车前1小时。</p>
             <p>3. 预约成功后，如需取消，请在发车前1小时内取消，否则将视为违约。</p>
         </div>
     </u-modal>
+
+    <u-modal title="乘车码" :show="showQcode" @confirm="closeQcode" @close="closeQcode">
+        <div class="qrcode-container">
+            <!-- 加载状态 -->
+            <div v-if="!qrcodeReady && showQcode" class="qrcode-loading">
+                <up-loading-icon mode="spinner" color="#409eff" size="40"></up-loading-icon>
+                <text class="loading-text">正在生成乘车码...</text>
+            </div>
+
+            <!-- 二维码 -->
+            <div v-if="showQcode" class="qrcode-wrapper">
+                <up-qrcode :cid="'qcode'" :size="150" showLoading loadingText="正在加载" v-show="qrcodeReady"
+                    val="https://click.meituan.com/t?t=1&c=2&p=WhaD2b5zGU-h" @result="onQrcodeResult"
+                    @error="onQrcodeError">
+                </up-qrcode>
+            </div>
+
+            <!-- 使用提示 -->
+            <div v-if="qrcodeReady" class="qrcode-tip">
+                <text>请将此码靠近扫码区</text>
+            </div>
+        </div>
+    </u-modal>
+
 </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from 'vue';
+import { storeToRefs } from "pinia";
+import { useTabbar } from '@/stores/tabbarStore';
 
-// 定义组件属性
-interface Props {
-    items?: Array<{
-        quantity: string
-        description: string
-        icon: string
-        color: string
-        bgColor: string
-    }>
-}
 
-const props = withDefaults(defineProps<Props>(), {
-    items: () => [
-        {
-            quantity: '立即预约',
-            description: '点击开始预约',
-            icon: 'yuyue',
-            color: 'rgba(149,149,255,1)',
-            bgColor: '#c7c7ff'
-        },
-        {
-            quantity: '扫码乘车',
-            description: '出示乘车码',
-            icon: 'saomashibie',
-            color: 'rgba(252,161,71,1)',
-            bgColor: '#ffd8be'
-        },
-        {
-            quantity: '消息中心',
-            description: '消息通知中心',
-            icon: 'xiaoxi',
-            color: 'rgba(66,193,110,1)',
-            bgColor: '#a9ecbf'
-        },
-        {
-            quantity: '预约须知',
-            description: '预约相关事项',
-            icon: 'huiyixuzhi',
-            color: 'rgba(220,91,183,1)',
-            bgColor: '#f3bbe1'
-        }
-    ]
-})
-
-// 定义事件
-const emit = defineEmits<{
-    itemClick: [index: number, item: any]
-}>()
 
 // 响应式数据
 const activeIndex = ref(-1)
-const show = ref(false)
-const content = ref('')
+const showRule = ref(false)
+const showQcode = ref(false)
+const qrcodeReady = ref(false) // 新增：二维码准备状态
 
-// 方法
+const tabbarStore = useTabbar();
+const { activeTab } = storeToRefs(tabbarStore)
+
+const tabbarList = ref([
+    {
+        index: 1,
+        name: "预约",
+        url: "/pages/appointment/appointment",
+        icon: "yuyue",
+    },
+    {
+        index: 2,
+        name: "行程",
+        url: "/pages/schedule/schedule",
+        icon: "hangchengxinxi",
+    }
+])
+//-------------------------------分割线--------------------------------
+
+
+const goToNext = (item: any) => {
+    if (item.index === activeTab.value) {
+        // 阻止切换
+        return;
+    }
+    tabbarStore.setActiveTab(item.index);
+    uni.switchTab({
+        url: item.url
+    });
+};
+
+
 const handleItemClick = (index: number) => {
     activeIndex.value = index
 
@@ -110,32 +121,53 @@ const handleItemClick = (index: number) => {
         activeIndex.value = -1
     }, 300)
 
-    // 如果点击预约须知，显示弹窗
-    if (index === 3) {
-        show.value = true
-        return
-    }
-
-    // 触发事件
-    emit('itemClick', index, props.items[index])
-
     // 处理不同的点击逻辑
     switch (index) {
         case 0:
             console.log('跳转到预约页面')
-            // uni.navigateTo({ url: '/pages/booking/index' })
+            goToNext(tabbarList.value[0])
             break
         case 1:
             console.log('打开扫码页面')
-            // uni.navigateTo({ url: '/pages/qrcode/index' })
+            qrcodeReady.value = false // 重置二维码状态
+            showQcode.value = true
             break
         case 2:
-            console.log('跳转到消息中心')
-            // uni.navigateTo({ url: '/pages/message/index' })
+            console.log('跳转到我的行程')
+            goToNext(tabbarList.value[1])
             break
+        case 3:
+            console.log('显示预约须知')
+            showRule.value = true
+            break;
         default:
             break
     }
+}
+
+// 新增：二维码生成成功回调
+const onQrcodeResult = (result: any) => {
+    console.log('二维码生成成功:', result)
+    // 延迟0.8秒后显示二维码
+    setTimeout(() => {
+        qrcodeReady.value = true
+    }, 500)
+}
+
+// 新增：二维码生成错误回调
+const onQrcodeError = (error: any) => {
+    console.error('二维码生成失败:', error)
+    qrcodeReady.value = false
+    uni.showToast({
+        title: '二维码生成失败',
+        icon: 'error'
+    })
+}
+
+// 新增：关闭乘车码模态框
+const closeQcode = () => {
+    qrcodeReady.value = false // 立即隐藏二维码
+    showQcode.value = false
 }
 </script>
 
@@ -144,6 +176,8 @@ const handleItemClick = (index: number) => {
     width: 100%;
     padding: 0 15px;
     box-sizing: border-box;
+    margin-top: 20rpx;
+    margin-bottom: 20rpx;
 }
 
 .card {
@@ -265,6 +299,45 @@ const handleItemClick = (index: number) => {
             margin-bottom: 0;
         }
     }
+}
+
+/* 新增：乘车码相关样式 */
+.qrcode-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    min-height: 200px;
+}
+
+.qrcode-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.loading-text {
+    font-size: 14px;
+    color: #666;
+}
+
+.qrcode-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.qrcode-tip {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.qrcode-tip text {
+    font-size: 14px;
+    color: #999;
 }
 
 // 响应式适配

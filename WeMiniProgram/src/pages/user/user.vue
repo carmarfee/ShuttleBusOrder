@@ -194,13 +194,6 @@ const serviceMenus = ref([
         desc: '查看和管理您的出行计划',
         icon: 'calendar-fill',
         color: '#667eea'
-    },
-    {
-        name: 'wallet',
-        title: '我的钱包',
-        desc: '管理您的账户余额和交易',
-        icon: 'wallet-fill',
-        color: '#67c23a'
     }
 ]);
 

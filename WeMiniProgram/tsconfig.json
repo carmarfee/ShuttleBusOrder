@@ -32,5 +32,5 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ]
+, "src/utils/request.ts", "src/api/auth.ts"  ]
 }
