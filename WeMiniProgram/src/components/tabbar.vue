@@ -1,7 +1,8 @@
 <template>
 <div class="u-page__item">
     <up-tabbar :value="activeTab" :fixed="true" :safeAreaInsetBottom="true" :placeholder="false">
-        <up-tabbar-item v-for="(item, index) in tabbarList" :key="index" :text="item.name" @click="goToNext(item)" :icon=item.icon>
+        <up-tabbar-item v-for="(item, index) in tabbarList" :key="index" :text="item.name" @click="goToNext(item)"
+            :icon=item.icon>
         </up-tabbar-item>
     </up-tabbar>
 </div>
@@ -9,10 +10,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useTabbar } from "@/stores/tabbarStore";
+import { useUserStore } from "@/stores/userStore";
+import { useTabbarStore } from "@/stores/tabbarStore";
 import { storeToRefs } from "pinia";
 
-const tabbarStore = useTabbar();
+const tabbarStore = useTabbarStore();
 const { activeTab } = storeToRefs(tabbarStore)
 const tabbarList = ref([
     {
@@ -40,6 +42,27 @@ const tabbarList = ref([
         icon: "wode",
     }
 ])
+
+const tabbarListDriver = ref([
+    {
+        index: 0,
+        name: "首页",
+        url: "/pages/home/home",
+        icon: "home1"
+    },
+    {
+        index: 1,
+        name: "行程",
+        url: "/pages/schedule/schedule",
+        icon: "hangchengxinxi",
+    },
+    {
+        index: 2,
+        name: "我的",
+        url: "/pages/user/user",
+        icon: "wode",
+    }
+]);
 
 //-------------------------------分割线--------------------------------
 const goToNext = (item: any) => {
@@ -79,9 +102,10 @@ const goToNext = (item: any) => {
     }
 }
 
-.u-tabbar__content{
+.u-tabbar__content {
     height: 60px !important;
 }
+
 .u-tabbar-item {
     &__text {
         font-size: 10px !important;

@@ -14,12 +14,13 @@
                 <up-icon name="saomashibie" customPrefix="custom-icon" size="40" color="rgba(252,161,71,1)"></up-icon>
             </div>
             <p class="quantity">扫码乘车</p>
-            <p class="description">出示乘车码</p>
+            <p class="description">出示下一次的乘车码</p>
         </div>
 
         <div class="item item--3" @tap="handleItemClick(2)" :class="{ 'item-active': activeIndex === 2 }">
             <div class="icon-wrapper">
-                <up-icon name="hangchengxinxi" customPrefix="custom-icon" size="40" color="rgba(150,193,183,1)"></up-icon>
+                <up-icon name="hangchengxinxi" customPrefix="custom-icon" size="40"
+                    color="rgba(150,193,183,1)"></up-icon>
             </div>
             <p class="quantity">我的行程</p>
             <p class="description">查看我的行程</p>
@@ -71,7 +72,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { storeToRefs } from "pinia";
-import { useTabbar } from '@/stores/tabbarStore';
+import { useTabbarStore } from '@/stores/tabbarStore';
 
 
 
@@ -79,9 +80,9 @@ import { useTabbar } from '@/stores/tabbarStore';
 const activeIndex = ref(-1)
 const showRule = ref(false)
 const showQcode = ref(false)
-const qrcodeReady = ref(false) // 新增：二维码准备状态
+const qrcodeReady = ref(false) 
 
-const tabbarStore = useTabbar();
+const tabbarStore = useTabbarStore();
 const { activeTab } = storeToRefs(tabbarStore)
 
 const tabbarList = ref([

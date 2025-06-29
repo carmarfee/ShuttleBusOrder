@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useTabbar = defineStore('tabbar', {
+export const useTabbarStore = defineStore('tabbar', {
     state: () => {
         return {
             // 当前选中的tabbar索引
