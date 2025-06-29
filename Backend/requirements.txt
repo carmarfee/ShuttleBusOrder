@@ -1,0 +1,25 @@
+# 基础框架
+fastapi==0.95.2
+uvicorn==0.22.0
+pydantic==1.10.20
+# 数据库驱动
+pymysql==1.1.0
+sqlalchemy==2.0.20
+databases==0.9.0
+aiomysql==0.1.1
+
+#docker管理
+docker==4.1.0
+urllib3<=2 #必须的依赖
+# 环境变量管理
+python-dotenv==1.0.0
+
+requests==2.31.0
+# 安全相关（按需添加）
+passlib==1.7.4
+python-jose[cryptography]==3.3.0
+cryptography==41.0.3
+
+# 测试工具（开发环境使用，生产可移除）
+pytest==7.4.0
+httpx==0.25.0

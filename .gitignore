@@ -1,0 +1,71 @@
+# --- 忽略敏感的环境变量文件 ---
+# 这是最重要的部分，避免将数据库密码等敏感信息上传到 git
+.env
+.env.*
+!.env.example
+
+# --- Python 相关的忽略 ---
+# 字节码和编译文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C 扩展
+*.so
+
+# 虚拟环境目录
+venv/
+.venv/
+env/
+virtualenv/
+ENV/
+
+# 包管理和分发
+*.egg-info/
+*.egg
+build/
+dist/
+wheels/
+*.tar.gz
+*.whl
+
+# 测试和覆盖率报告
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# 类型检查缓存
+.mypy_cache/
+.pyre/
+
+# --- Docker 相关的忽略 ---
+# 如果你没有使用具名卷(named volume)，而是将数据库数据直接映射到本地文件夹，
+# 请取消下面一行的注释，并替换为你自己的目录名
+# mysql_data/
+
+# --- IDE 和编辑器相关的配置 ---
+# VSCode
+.vscode/
+# PyCharm
+.idea/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+# Atom
+.project
+.pydevproject
+
+# --- 操作系统生成的文件 ---
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+desktop.ini
+
+# --- 日志文件和其他临时文件 ---
+*.log
+*.log.*
+*.sqlite3
+*.db
