@@ -53,8 +53,8 @@ class User(Base):
         
     }
     id = Column(String(50), primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True, nullable=False)
-    password = Column(String(50), unique=True, index=True, nullable=False)
+    name = Column(String(50), index=True, nullable=False)
+    password = Column(String(50), index=True, nullable=False)
     phone = Column(String(20), unique=True, index=True, nullable=False)
     role = Column(String(20), nullable=False, index=True)
     department = Column(String(50), nullable=True, index=True)
@@ -144,6 +144,20 @@ class Order(Base):
 Bus.schedules = relationship("BusSchedule", back_populates="bus")
 
 # 动态通知
+class Dynamics(Base):
+    __tablename__ = "dynamics"
+    __table_args__ = {
+        'mysql_engine': 'InnoDB',
+        'mysql_charset': 'utf8mb4',
+        'mysql_collate': 'utf8mb4_unicode_ci',
+        'comment': '动态通知',
+    }
+    id = Column(String(50), primary_key=True, index=True, comment='动态ID')
+    title = Column(String(200), nullable=False, comment='标题')
+    publish_time = Column(DateTime, nullable=False, index=True, comment='发布时间')
+    content = Column(Text, nullable=False, comment='内容')
+    attachment_name = Column(String(200), nullable=False, comment='文件名')
+    attachment_url = Column(String(500), comment='文件访问URL')
 
 
 

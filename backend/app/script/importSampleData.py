@@ -16,7 +16,7 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "name": "张三",
-                    "password": "123456",
+                    "password": "123451",
                     "phone": "13800138001",
                     "role": "student",
                     "department": "计算机学院"
@@ -24,7 +24,7 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "name": "李四", 
-                    "password": "123456"
+                    "password": "123452",
                     "phone": "13800138002",
                     "role": "teacher",
                     "department": "信息学部"
@@ -32,11 +32,11 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "name": "王五",
-                    "password": "123456"
+                    "password": "123453" ,
                     "phone": "13800138003", 
                     "role": "driver",
                     "department": "行政部"
-                }
+                },
             ]
             
             users = []
@@ -91,31 +91,6 @@ async def insert_sample_data():
                     "driver_phone": "13349989991",
                     "capacity": 40,
                     "route_id": "route_main_to_new"
-                },
-                # 新校区→本部方向的班车
-                {
-                    "id": "bus_alb160_2",
-                    "bus_number": "ALB160",
-                    "driver_name": "范师傅",
-                    "driver_phone": "13349989991", 
-                    "capacity": 40,
-                    "route_id": "route_new_to_main"
-                },
-                {
-                    "id": "bus_ayb260_2",
-                    "bus_number": "AYB260", 
-                    "driver_name": "杨师傅",
-                    "driver_phone": "13971341207",
-                    "capacity": 50,
-                    "route_id": "route_new_to_main"
-                },
-                {
-                    "id": "bus_alb328_2",
-                    "bus_number": "ALB328",
-                    "driver_name": "吴师傅",
-                    "driver_phone": "15907179119",
-                    "capacity": 45, 
-                    "route_id": "route_new_to_main"
                 }
             ]
             

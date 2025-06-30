@@ -7,6 +7,7 @@ from typing import List, Optional
 import uvicorn
 from contextlib import asynccontextmanager
 from app.api.api import api_router
+from app.script.importSampleData import insert_sample_data,clear_all_data
 
 
 # 导入你的数据库配置（假设保存为database.py）
@@ -18,8 +19,10 @@ from app.models.db_models import  create_tables
 async def lifespan(app: FastAPI):
     # 启动时创建数据库表
     await create_tables()
+    await insert_sample_data()
     yield
     # 关闭时的清理工作（如果需要）
+    await clear_all_data()
 
 # 创建FastAPI应用
 app = FastAPI(
@@ -30,7 +33,7 @@ app = FastAPI(
 )
 
 # 分级路由，来自api
-app.include_router(api_router)
+app.include_router(api_router,prefix = "/api")
 
 # API路由
 @app.get("/", summary="根路径")
