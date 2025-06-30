@@ -58,7 +58,7 @@ class LoginRequest(BaseModel):
     """
     定义登录接口的请求体格式 (简化版)。
     """
-    passwordistr = Field(..., description="用deng'lu'mi'ma学工号")
+    id: str = Field(..., description="用户ID，学工号")
     password: str = Field(..., description="用户密码")
     role: str = Field(..., description="用户角色")
 
