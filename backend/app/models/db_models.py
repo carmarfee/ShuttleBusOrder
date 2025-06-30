@@ -37,10 +37,11 @@ Base = declarative_base()
 
 # 添加缺失的枚举定义
 class OrderStatus(enum.Enum):
-    BOOKED = "booked" #预约
-    COMPLETED = "completed" #完成
-    CANCELLED = "cancelled" #取消
-    VOILATED = "violated" #违约
+    BOOKED = "booked"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    VOILATED = "violated"
+    
 
 # 模型定义
 class User(Base):
@@ -58,6 +59,9 @@ class User(Base):
     phone = Column(String(20), unique=True, index=True, nullable=False)
     role = Column(String(20), nullable=False, index=True)
     department = Column(String(50), nullable=True, index=True)
+    
+    # 添加关系
+    orders = relationship("Order", back_populates="user")
 
 
 class Route(Base):
@@ -72,6 +76,9 @@ class Route(Base):
     id = Column(String(50), primary_key=True, index=True, comment='路线ID')
     start_location = Column(String(100), nullable=False, comment='起点位置')
     end_location = Column(String(100), nullable=False, comment='终点位置')
+    
+    # 添加关系
+    orders = relationship("Order", back_populates="route")
     
     
 class Bus(Base):
@@ -89,6 +96,10 @@ class Bus(Base):
     driver_phone = Column(String(20), comment='司机电话')
     capacity = Column(Integer, nullable=False, default=0, comment='座位数')
     route_id = Column(String(50), nullable=False, comment='路线ID')
+    
+    # 添加关系
+    schedules = relationship("BusSchedule", back_populates="bus")
+    orders = relationship("Order", back_populates="bus")
 
 
 class BusSchedule(Base):
@@ -137,11 +148,11 @@ class Order(Base):
     status = Column(Enum(OrderStatus), default=OrderStatus.BOOKED, index=True, comment='订单状态')
     
     # 关系
+    user = relationship("User", back_populates="orders")
+    route = relationship("Route", back_populates="orders")
+    bus = relationship("Bus", back_populates="orders")
     schedule = relationship("BusSchedule", back_populates="orders")
 
-
-# 在Bus类中添加关系
-Bus.schedules = relationship("BusSchedule", back_populates="bus")
 
 # 动态通知
 class Dynamics(Base):

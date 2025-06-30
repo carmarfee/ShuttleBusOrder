@@ -2,13 +2,20 @@ import asyncio
 from datetime import datetime, date, time
 from decimal import Decimal
 import uuid
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.db_models import (  # 替换为你的模型文件名
     AsyncSessionLocal, User, Route, Bus, BusSchedule, Order, OrderStatus
 )
 
-async def insert_sample_data():
+async def insert_sample_data(clear_existing = True):
     """插入基于图片时刻表的示例数据"""
+
+    if clear_existing:
+        # 先清空现有数据
+        print("🧹 开始清理现有数据...")
+        await clear_all_data()
+        print("✅ 数据清理完成")
     async with AsyncSessionLocal() as session:
         try:
             # 1. 插入用户数据
@@ -45,6 +52,8 @@ async def insert_sample_data():
                 users.append(user)
                 session.add(user)
             
+            print("插入用户数据完成")
+            
             # 2. 插入路线数据
             routes_data = [
                 {
@@ -65,12 +74,14 @@ async def insert_sample_data():
                 routes.append(route)
                 session.add(route)
             
-            # 3. 插入班车数据（基于图片中的车辆信息）
+            print("插入路线数据完成")
+            
+            # 3. 插入班车数据（包含双向班车）
             buses_data = [
                 # 本部→新校区方向的班车
                 {
                     "id": "bus_ayb260_1",
-                    "bus_number": "AYB260",
+                    "bus_number": "AYB260-1",
                     "driver_name": "杨师傅", 
                     "driver_phone": "13971341207",
                     "capacity": 50,
@@ -78,7 +89,7 @@ async def insert_sample_data():
                 },
                 {
                     "id": "bus_alb328_1",
-                    "bus_number": "ALB328",
+                    "bus_number": "ALB328-1",
                     "driver_name": "吴师傅",
                     "driver_phone": "15907179119", 
                     "capacity": 45,
@@ -86,11 +97,36 @@ async def insert_sample_data():
                 },
                 {
                     "id": "bus_alb160_1",
-                    "bus_number": "ALB160",
+                    "bus_number": "ALB160-1",
                     "driver_name": "范师傅",
                     "driver_phone": "13349989991",
                     "capacity": 40,
                     "route_id": "route_main_to_new"
+                },
+                # 新校区→本部方向的班车（添加缺失的班车）
+                {
+                    "id": "bus_alb160_2",
+                    "bus_number": "ALB160-2",
+                    "driver_name": "范师傅",
+                    "driver_phone": "13349989991",
+                    "capacity": 40,
+                    "route_id": "route_new_to_main"
+                },
+                {
+                    "id": "bus_ayb260_2",
+                    "bus_number": "AYB260-2",
+                    "driver_name": "杨师傅",
+                    "driver_phone": "13971341207",
+                    "capacity": 50,
+                    "route_id": "route_new_to_main"
+                },
+                {
+                    "id": "bus_alb328_2",
+                    "bus_number": "ALB328-2",
+                    "driver_name": "吴师傅",
+                    "driver_phone": "15907179119",
+                    "capacity": 45,
+                    "route_id": "route_new_to_main"
                 }
             ]
             
@@ -100,8 +136,11 @@ async def insert_sample_data():
                 buses.append(bus)
                 session.add(bus)
             
-            # 提交基础数据
+            print("插入班车数据完成")
+            
+            # 提交基础数据（确保外键约束满足）
             await session.commit()
+            print("基础数据提交成功")
             
             # 4. 插入班车时刻表数据（基于图片中的时刻表）
             schedules_data = [
@@ -109,7 +148,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_ayb260_1",
-                    "schedule_date": date.today(),
                     "departure_time": time(7, 0),  # 07:00
                     "recurring_pattern": "周一到周五",
                     "departure_location": "信息学部国重门口",
@@ -118,7 +156,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_alb328_1", 
-                    "schedule_date": date.today(),
                     "departure_time": time(12, 40),  # 12:40
                     "recurring_pattern": "周一到周五",
                     "departure_location": "信息学部国重门口",
@@ -127,7 +164,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_alb160_1",
-                    "schedule_date": date.today(), 
                     "departure_time": time(19, 0),  # 19:00
                     "recurring_pattern": "周一到周日",
                     "departure_location": "本部当代楼校巴站",
@@ -137,7 +173,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_alb160_2",
-                    "schedule_date": date.today(),
                     "departure_time": time(6, 40),  # 06:40
                     "recurring_pattern": "周一到周日", 
                     "departure_location": "新校区一食堂",
@@ -146,7 +181,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_ayb260_2",
-                    "schedule_date": date.today(),
                     "departure_time": time(12, 20),  # 12:20
                     "recurring_pattern": "周一到周五",
                     "departure_location": "新校区新驻楼",
@@ -155,7 +189,6 @@ async def insert_sample_data():
                 {
                     "id": str(uuid.uuid4()),
                     "bus_id": "bus_alb328_2",
-                    "schedule_date": date.today(),
                     "departure_time": time(17, 30),  # 17:30
                     "recurring_pattern": "周一到周五",
                     "departure_location": "新校区新驻楼", 
@@ -169,6 +202,12 @@ async def insert_sample_data():
                 schedules.append(schedule)
                 session.add(schedule)
             
+            print("插入时刻表数据完成")
+            
+            # 再次提交，确保时刻表数据入库
+            await session.commit()
+            print("时刻表数据提交成功")
+            
             # 5. 插入示例订单数据
             orders_data = [
                 {
@@ -178,7 +217,7 @@ async def insert_sample_data():
                     "route_id": "route_main_to_new",
                     "bus_id": "bus_ayb260_1", 
                     "schedule_id": schedules[0].id,
-                    "status": OrderStatus.CONFIRMED
+                    "status": OrderStatus.BOOKED
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -187,7 +226,7 @@ async def insert_sample_data():
                     "route_id": "route_new_to_main",
                     "bus_id": "bus_alb160_2",
                     "schedule_id": schedules[3].id,
-                    "status": OrderStatus.PENDING
+                    "status": OrderStatus.BOOKED
                 }
             ]
             
@@ -195,18 +234,21 @@ async def insert_sample_data():
                 order = Order(**order_data)
                 session.add(order)
             
-            # 提交所有数据
+            print("插入订单数据完成")
+            
+            # 最终提交所有数据
             await session.commit()
-            print("数据插入成功！")
-            print(f"插入了 {len(users)} 个用户")
-            print(f"插入了 {len(routes)} 条路线")
-            print(f"插入了 {len(buses)} 辆班车")
-            print(f"插入了 {len(schedules)} 个班次")
-            print(f"插入了 {len(orders_data)} 个订单")
+            print("✅ 数据插入成功！")
+            print(f"📊 插入统计:")
+            print(f"   👥 用户: {len(users)} 个")
+            print(f"   🛣️  路线: {len(routes)} 条")
+            print(f"   🚌 班车: {len(buses)} 辆")
+            print(f"   ⏰ 班次: {len(schedules)} 个")
+            print(f"   📋 订单: {len(orders_data)} 个")
             
         except Exception as e:
             await session.rollback()
-            print(f"数据插入失败: {e}")
+            print(f"❌ 数据插入失败: {e}")
             raise
 
 
@@ -214,15 +256,21 @@ async def clear_all_data():
     """清空所有表数据（谨慎使用）"""
     async with AsyncSessionLocal() as session:
         try:
+            print("🗑️  开始清空数据...")
             # 按照外键依赖关系的相反顺序删除
-            await session.execute("DELETE FROM bus_orders")
-            await session.execute("DELETE FROM schedule") 
-            await session.execute("DELETE FROM buses")
-            await session.execute("DELETE FROM routes")
-            await session.execute("DELETE FROM users")
+            await session.execute(text("DELETE FROM bus_orders"))
+            print("   清空订单表完成")
+            await session.execute(text("DELETE FROM schedule")) 
+            print("   清空时刻表完成")
+            await session.execute(text("DELETE FROM buses"))
+            print("   清空班车表完成")
+            await session.execute(text("DELETE FROM routes"))
+            print("   清空路线表完成")
+            await session.execute(text("DELETE FROM users"))
+            print("   清空用户表完成")
             await session.commit()
-            print("所有数据已清空")
+            print("✅ 所有数据已清空")
         except Exception as e:
             await session.rollback()
-            print(f"清空数据失败: {e}")
+            print(f"❌ 清空数据失败: {e}")
             raise
