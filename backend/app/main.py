@@ -19,10 +19,10 @@ from app.models.db_models import  create_tables
 async def lifespan(app: FastAPI):
     # 启动时创建数据库表
     await create_tables()
-    await insert_sample_data()
+    # await insert_sample_data()
     yield
     # 关闭时的清理工作（如果需要）
-    await clear_all_data()
+    # awaitclear_all_data()
 
 # 创建FastAPI应用
 app = FastAPI(

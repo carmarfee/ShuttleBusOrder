@@ -1,7 +1,7 @@
 # app/schemas.py
 from pydantic import BaseModel, Field
 from typing import Optional
-
+from app.models.db_models import OrderStatus
 # Pydantic模型用于请求和响应
 
 
@@ -73,3 +73,34 @@ class LoginResponse(BaseModel):
 
 # 更新 LoginResponse 的模型引用
 LoginResponse.update_forward_refs(UserResponse=UserResponse)
+
+
+# ===============================================================
+# 预约信息相关的模型 (新增部分)
+# ===============================================================
+
+class AppointmentInfoResponse(BaseModel):
+    """
+    定义获取预约信息接口的响应格式。
+    """
+    # 订单基本信息
+    id: str
+    order_no: str
+    status: OrderStatus
+    
+    # 关联的用户信息
+    user_id: str
+    user_name: str
+    
+    # 关联的班次和路线信息
+    route_id: str
+    bus_id: str
+    schedule_id: str
+    
+    # 衍生的信用情况
+    credit_status: str = Field(..., description="根据订单状态衍生的信用情况")
+    
+    # 你可以根据需要添加更多字段，例如：
+    # start_location: str
+    # end_location: str
+    # departure_time: datetime

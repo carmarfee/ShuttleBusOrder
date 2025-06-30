@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # 请根据你的项目结构调整 import 路径
-from app.core.database import get_db
+from app.models.db_models import get_db
 from app.models import schemas, db_models
-from app.services import user_curd # 或者你创建的 order_curd
+from app.services import order_curd # 或者你创建的 order_curd
 
 router = APIRouter()
 
@@ -16,14 +16,14 @@ def derive_credit_status(order_status: db_models.OrderStatus) -> str:
     你可以根据实际业务规则扩展此逻辑。
     """
     if order_status == db_models.OrderStatus.COMPLETED:
-        return "信用良好"
+        return "已完成"
     elif order_status == db_models.OrderStatus.CANCELLED:
-        return "有待观察 (已取消)"
-    elif order_status == db_models.OrderStatus.PENDING:
-        return "正常 (待处理)"
-    elif order_status == db_models.OrderStatus.CONFIRMED:
-        return "正常 (已确认)"
-    return "未知"
+        return "以取消"
+    elif order_status == db_models.OrderStatus.VOILATED:
+        return "违约"
+    elif order_status == db_models.OrderStatus.BOOKED:
+        return "预约"
+    return "未知" #理应抛出错误
 
 
 @router.get(
@@ -43,7 +43,7 @@ async def get_appointment_info(
     """
     # --- 步骤 1: 调用服务函数查询订单 ---
     # 假设你已将 get_order_by_order_no 添加到 user_curd 中
-    order = await user_curd.get_order_by_order_no(db, order_no=order_no)
+    order = await order_curd.get_order_by_order_no(db, order_no=order_no)
     
     # --- 步骤 2: 检查订单是否存在 ---
     if not order:

@@ -37,10 +37,10 @@ Base = declarative_base()
 
 # 添加缺失的枚举定义
 class OrderStatus(enum.Enum):
-    PENDING = "pending"
-    CONFIRMED = "confirmed"
-    CANCELLED = "cancelled"
-    COMPLETED = "completed"
+    BOOKED = "booked" #预约
+    COMPLETED = "completed" #完成
+    CANCELLED = "cancelled" #取消
+    VOILATED = "violated" #违约
 
 # 模型定义
 class User(Base):
@@ -134,7 +134,7 @@ class Order(Base):
     schedule_id = Column(String(50), ForeignKey('schedule.id'), nullable=False, comment='班次ID')
     
     # 订单状态
-    status = Column(Enum(OrderStatus), default=OrderStatus.PENDING, index=True, comment='订单状态')
+    status = Column(Enum(OrderStatus), default=OrderStatus.BOOKED, index=True, comment='订单状态')
     
     # 关系
     schedule = relationship("BusSchedule", back_populates="orders")
