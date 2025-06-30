@@ -8,7 +8,7 @@ from datetime import timedelta
 from app.models.db_models import get_db
 from app.models import schemas
 from app.services import user_curd
-from app.utils import security
+from app.core import security
 from app.core.config import settings
 
 router = APIRouter()
@@ -49,7 +49,7 @@ async def login_for_access_token(
     if  login_data.password != user.password or login_data.role != user.role:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="用户不存在，请联系管理员添加账户。",
+            detail=f"用户不存在，请联系管理员添加账户。:pass: {login_data.password}  | {user.password}",
         )
 
 
@@ -60,5 +60,12 @@ async def login_for_access_token(
         expires_delta=access_token_expires
     )
 
+    user_info = schemas.UserResponse(
+        id = user.id,
+        name = user.name,
+        role = user.role,
+        department = user.department
+    )
+
     # --- 步骤 5: 构建并返回响应 ---
-    return {"token": access_token, "userinfo": user}
+    return schemas.LoginResponse(token=access_token, userinfo=user_info)

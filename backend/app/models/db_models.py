@@ -143,9 +143,13 @@ class Order(Base):
     route_id = Column(String(50), ForeignKey('routes.id'), nullable=False, comment='路线ID')
     bus_id = Column(String(50), ForeignKey('buses.id'), nullable=False, comment='班车ID')
     schedule_id = Column(String(50), ForeignKey('schedule.id'), nullable=False, comment='班次ID')
+    booking_date = Column(Date, nullable=False, index=True, comment='预约发车日期')
     
     # 订单状态
     status = Column(Enum(OrderStatus), default=OrderStatus.BOOKED, index=True, comment='订单状态')
+
+    #订单时间
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False, comment='预约时间')
     
     # 关系
     user = relationship("User", back_populates="orders")

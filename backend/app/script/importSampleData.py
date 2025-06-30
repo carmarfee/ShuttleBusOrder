@@ -21,7 +21,8 @@ async def insert_sample_data(clear_existing = True):
             # 1. 插入用户数据
             users_data = [
                 {
-                    "id": str(uuid.uuid4()),
+                    #"id": str(uuid.uuid4()),
+                    "id": "0000",
                     "name": "张三",
                     "password": "123451",
                     "phone": "13800138001",
@@ -217,7 +218,8 @@ async def insert_sample_data(clear_existing = True):
                     "route_id": "route_main_to_new",
                     "bus_id": "bus_ayb260_1", 
                     "schedule_id": schedules[0].id,
-                    "status": OrderStatus.BOOKED
+                    "status": OrderStatus.BOOKED,
+                    "booking_date": date.today()
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -226,7 +228,8 @@ async def insert_sample_data(clear_existing = True):
                     "route_id": "route_new_to_main",
                     "bus_id": "bus_alb160_2",
                     "schedule_id": schedules[3].id,
-                    "status": OrderStatus.BOOKED
+                    "status": OrderStatus.BOOKED,
+                    "booking_date": date.today()
                 }
             ]
             
