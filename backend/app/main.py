@@ -6,33 +6,12 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import uvicorn
 from contextlib import asynccontextmanager
+from app.api.api import api_router
+
 
 # 导入你的数据库配置（假设保存为database.py）
-from app.models.db_models import get_db, create_tables, User
+from app.models.db_models import  create_tables
 
-# Pydantic模型用于请求和响应
-class UserCreate(BaseModel):
-    id: int = Field(..., description="用户ID，学工号")
-    name: str = Field(..., min_length=1, max_length=50, description="用户名称")
-    phone: str = Field(..., min_length=1, max_length=20, description="手机号码")
-    role: str = Field(..., min_length=1, max_length=20, description="用户角色")
-    department: Optional[str] = Field(None, max_length=50, description="部门")
-
-class UserUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=50)
-    phone: Optional[str] = Field(None, min_length=1, max_length=20)
-    role: Optional[str] = Field(None, min_length=1, max_length=20)
-    department: Optional[str] = Field(None, max_length=50)
-
-class UserResponse(BaseModel):
-    id: int
-    name: str
-    phone: str
-    role: str
-    department: Optional[str]
-    
-    class Config:
-        from_attributes = True
 
 # 应用启动和关闭事件处理
 @asynccontextmanager
@@ -49,6 +28,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# 分级路由，来自api
+app.include_router(api_router)
 
 # API路由
 @app.get("/", summary="根路径")

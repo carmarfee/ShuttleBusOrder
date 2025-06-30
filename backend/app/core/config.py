@@ -15,8 +15,6 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
     # 微信小程序配置
-    WX_APPID: str
-    WX_SECRET: str
     WX_TOKEN_EXPIRE_MINUTES: int = 1440  # 24小时
 
     # JWT 令牌配置
