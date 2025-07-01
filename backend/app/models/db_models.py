@@ -59,6 +59,8 @@ class User(Base):
     phone = Column(String(20), unique=True, index=True, nullable=False)
     role = Column(String(20), nullable=False, index=True)
     department = Column(String(50), nullable=True, index=True)
+
+    openid = Column(String(100), unique=True, nullable=True, index=True, comment='微信小程序OpenID')
     
     # 添加关系
     orders = relationship("Order", back_populates="user")

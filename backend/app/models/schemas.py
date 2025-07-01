@@ -2,7 +2,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from app.models.db_models import OrderStatus
-from datetime import datetime, time
+from datetime import datetime, time,date
 # Pydantic模型用于请求和响应
 
 
@@ -241,6 +241,18 @@ class RoutesResponse(BaseModel):
     定义获取所有路线接口的响应格式。
     """
     routes: List[RouteItem]
+
+# ===============================================================
+# 预约相关的模型 (新增部分)
+# ===============================================================
+
+class AppointmentRequest(BaseModel):
+    """
+    定义预约接口的请求体格式。
+    """
+    user_id: str = Field(..., description="发起预约的用户的ID")
+    schedule_id: str = Field(..., description="要预约的班次的ID")
+    booking_date: date = Field(..., description="预约的乘车日期，格式为 YYYY-MM-DD")
 
 
 

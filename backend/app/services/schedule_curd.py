@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 from datetime import date
-from typing import List, Any
-
+from typing import List, Any, Optional
+from sqlalchemy.orm import joinedload
 from app.models import db_models
 
 def is_date_in_pattern(target_date: date, pattern: str) -> bool:
@@ -86,3 +86,16 @@ async def find_active_schedules(
             })
             
     return active_schedules
+
+
+async def get_schedule_by_id_with_bus(
+    db: AsyncSession, schedule_id: str
+) -> Optional[db_models.BusSchedule]:
+    """根据ID获取班次，并预加载关联的车辆信息。"""
+    query = (
+        select(db_models.BusSchedule)
+        .options(joinedload(db_models.BusSchedule.bus))
+        .filter(db_models.BusSchedule.id == schedule_id)
+    )
+    result = await db.execute(query)
+    return result.scalar_one_or_none()

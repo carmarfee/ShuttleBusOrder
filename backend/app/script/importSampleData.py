@@ -27,7 +27,8 @@ async def insert_sample_data(clear_existing = True):
                     "password": "123451",
                     "phone": "13800138001",
                     "role": "student",
-                    "department": "计算机学院"
+                    "department": "计算机学院",
+                    "openid": "oByqE6xu5ZTqlyWSFfhV0sBnp-34"
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -35,7 +36,8 @@ async def insert_sample_data(clear_existing = True):
                     "password": "123452",
                     "phone": "13800138002",
                     "role": "teacher",
-                    "department": "信息学部"
+                    "department": "信息学部",
+                    "openid": "1221"
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -43,7 +45,8 @@ async def insert_sample_data(clear_existing = True):
                     "password": "123453" ,
                     "phone": "13800138003", 
                     "role": "driver",
-                    "department": "行政部"
+                    "department": "行政部",
+                    "openid": "12"
                 },
             ]
             
