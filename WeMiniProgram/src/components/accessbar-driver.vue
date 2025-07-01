@@ -5,66 +5,18 @@
             <div class="icon-wrapper">
                 <up-icon name="yuyue" customPrefix="custom-icon" size="40" color="rgba(149,149,255,1)"></up-icon>
             </div>
-            <p class="quantity">立即预约</p>
-            <p class="description">点击开始预约</p>
+            <p class="quantity">乘客核验</p>
+            <p class="description">点击进行乘客核验</p>
         </div>
 
         <div class="item item--2" @tap="handleItemClick(1)" :class="{ 'item-active': activeIndex === 1 }">
             <div class="icon-wrapper">
                 <up-icon name="saomashibie" customPrefix="custom-icon" size="40" color="rgba(252,161,71,1)"></up-icon>
             </div>
-            <p class="quantity">扫码乘车</p>
-            <p class="description">出示下一次的乘车码</p>
-        </div>
-
-        <div class="item item--3" @tap="handleItemClick(2)" :class="{ 'item-active': activeIndex === 2 }">
-            <div class="icon-wrapper">
-                <up-icon name="hangchengxinxi" customPrefix="custom-icon" size="40"
-                    color="rgba(150,193,183,1)"></up-icon>
-            </div>
-            <p class="quantity">我的行程</p>
-            <p class="description">查看我的行程</p>
-        </div>
-
-        <div class="item item--4" @tap="handleItemClick(3)" :class="{ 'item-active': activeIndex === 3 }">
-            <div class="icon-wrapper">
-                <up-icon name="huiyixuzhi" customPrefix="custom-icon" size="45" color="rgba(220,91,183,1)"></up-icon>
-            </div>
-            <p class="quantity">预约须知</p>
-            <p class="description">预约相关事项</p>
+            <p class="quantity">预约情况</p>
+            <p class="description">查看当前班次预约情况</p>
         </div>
     </div>
-
-    <u-modal title="预约规则" :show="showRule" @confirm="() => showRule = false">
-        <div class="card-rule-info">
-            <p>1. 每位学生每月可预约班车次数为2次，超过2次将无法预约。</p>
-            <p>2. 每次预约需提前24小时进行，预约时间截止到班车发车前1小时。</p>
-            <p>3. 预约成功后，如需取消，请在发车前1小时内取消，否则将视为违约。</p>
-        </div>
-    </u-modal>
-
-    <u-modal title="乘车码" :show="showQcode" @confirm="closeQcode" @close="closeQcode">
-        <div class="qrcode-container">
-            <!-- 加载状态 -->
-            <div v-if="!qrcodeReady && showQcode" class="qrcode-loading">
-                <up-loading-icon mode="spinner" color="#409eff" size="40"></up-loading-icon>
-                <text class="loading-text">正在生成乘车码...</text>
-            </div>
-
-            <!-- 二维码 -->
-            <div v-if="showQcode" class="qrcode-wrapper">
-                <up-qrcode :cid="'qcode'" :size="150" showLoading loadingText="正在加载" v-show="qrcodeReady"
-                    val="https://click.meituan.com/t?t=1&c=2&p=WhaD2b5zGU-h" @result="onQrcodeResult"
-                    @error="onQrcodeError">
-                </up-qrcode>
-            </div>
-
-            <!-- 使用提示 -->
-            <div v-if="qrcodeReady" class="qrcode-tip">
-                <text>请将此码靠近扫码区</text>
-            </div>
-        </div>
-    </u-modal>
 
 </div>
 </template>
@@ -73,24 +25,18 @@
 import { ref } from 'vue';
 
 
-// 响应式数据
-const showRule = ref(false)
-const showQcode = ref(false)
-const qrcodeReady = ref(false) 
-
 
 const linkList = ref([
     {
-        name: "预约",
-        url: "/pages/appointment/appointment",
+        name: "核验",
+        url: "/pages/verification/verification",
     },
     {
-        name: "行程",
-        url: "/pages/schedule/schedule",
+        name: "乘客",
+        url: "/pages/passenger/passenger",
     }
 ])
 //-------------------------------分割线--------------------------------
-
 
 
 const handleItemClick = (index: number) => {
@@ -102,54 +48,18 @@ const handleItemClick = (index: number) => {
     // 处理不同的点击逻辑
     switch (index) {
         case 0:
-            console.log('跳转到预约页面')
             uni.navigateTo({
                 url: linkList.value[0].url
             })
             break
         case 1:
-            console.log('打开扫码页面')
-            qrcodeReady.value = false // 重置二维码状态
-            showQcode.value = true
-            break
-        case 2:
-            console.log('跳转到我的行程')
             uni.navigateTo({
                 url: linkList.value[1].url
             })
             break
-        case 3:
-            console.log('显示预约须知')
-            showRule.value = true
-            break;
         default:
             break
     }
-}
-
-// 新增：二维码生成成功回调
-const onQrcodeResult = (result: any) => {
-    console.log('二维码生成成功:', result)
-    // 延迟0.8秒后显示二维码
-    setTimeout(() => {
-        qrcodeReady.value = true
-    }, 500)
-}
-
-// 新增：二维码生成错误回调
-const onQrcodeError = (error: any) => {
-    console.error('二维码生成失败:', error)
-    qrcodeReady.value = false
-    uni.showToast({
-        title: '二维码生成失败',
-        icon: 'error'
-    })
-}
-
-// 新增：关闭乘车码模态框
-const closeQcode = () => {
-    qrcodeReady.value = false // 立即隐藏二维码
-    showQcode.value = false
 }
 </script>
 
@@ -164,11 +74,9 @@ const closeQcode = () => {
 
 .card {
     width: 100%;
-    height: 220px;
     color: white;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
     gap: 12px;
     overflow: visible;
     box-sizing: border-box;
@@ -290,7 +198,7 @@ const closeQcode = () => {
     align-items: center;
     justify-content: center;
     padding: 30px 20px;
-    min-height: 200px;
+    min-height: 100px;
 }
 
 .qrcode-loading {
@@ -325,7 +233,7 @@ const closeQcode = () => {
 // 响应式适配
 @media (max-width: 375px) {
     .card {
-        height: 200px;
+        height: 100px;
         gap: 10px;
     }
 
@@ -350,7 +258,7 @@ const closeQcode = () => {
     }
 
     .card {
-        height: 240px;
+        height: 140px;
         gap: 15px;
     }
 

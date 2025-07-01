@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
         userInfo: {
             id: '',
             name: '',
-            role: '',
+            role: 'admin',
             department: '',
         }
     };

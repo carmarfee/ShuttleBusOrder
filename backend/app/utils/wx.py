@@ -90,4 +90,3 @@ async def send_subscribe_message(access_token: str, openid: str, template_id: st
         
     except Exception as e:
         return {'success': False, 'errcode': -1, 'errmsg': str(e)}
-

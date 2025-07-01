@@ -26,6 +26,24 @@
 		},
 		{
 			"path": "pages/dynamic/dynamic"
+		},
+		{
+			"path": "pages/verification/verification"
+		},
+		{
+			"path": "pages/passenger/passenger"
+		},
+		{
+			"path": "pages/dataStatistics/dataStatistics"
+		},
+		{
+			"path": "pages/userAdmin/userAdmin"
+		},
+		{
+			"path": "pages/busAdmin/busAdmin"
+		},
+		{
+			"path": "pages/appointmentAdmin/appointmentAdmin"
 		}
 	],
 	"globalStyle": {
@@ -40,12 +58,6 @@
 		"list": [
 			{
 				"pagePath": "pages/home/home"
-			},
-			{
-				"pagePath": "pages/appointment/appointment"
-			},
-			{
-				"pagePath": "pages/schedule/schedule"
 			},
 			{
 				"pagePath": "pages/user/user"

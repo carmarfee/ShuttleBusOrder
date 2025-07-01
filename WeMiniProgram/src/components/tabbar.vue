@@ -9,10 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref} from "vue";
 import { useUserStore } from "@/stores/userStore";
 import { useTabbarStore } from "@/stores/tabbarStore";
 import { storeToRefs } from "pinia";
+import { onLoad } from "@dcloudio/uni-app";
 
 const tabbarStore = useTabbarStore();
 const { activeTab } = storeToRefs(tabbarStore)
@@ -25,44 +26,11 @@ const tabbarList = ref([
     },
     {
         index: 1,
-        name: "预约",
-        url: "/pages/appointment/appointment",
-        icon: "yuyue",
-    },
-    {
-        index: 2,
-        name: "行程",
-        url: "/pages/schedule/schedule",
-        icon: "hangchengxinxi",
-    },
-    {
-        index: 3,
         name: "我的",
         url: "/pages/user/user",
         icon: "wode",
     }
 ])
-
-const tabbarListDriver = ref([
-    {
-        index: 0,
-        name: "首页",
-        url: "/pages/home/home",
-        icon: "home1"
-    },
-    {
-        index: 1,
-        name: "行程",
-        url: "/pages/schedule/schedule",
-        icon: "hangchengxinxi",
-    },
-    {
-        index: 2,
-        name: "我的",
-        url: "/pages/user/user",
-        icon: "wode",
-    }
-]);
 
 //-------------------------------分割线--------------------------------
 const goToNext = (item: any) => {
@@ -75,6 +43,10 @@ const goToNext = (item: any) => {
         url: item.url
     });
 };
+
+onLoad(() => {
+    uni.hideTabBar();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -6,8 +6,8 @@
         fontWeight: 'bold',
         transform: 'scale(1.05)'
     }" :inactiveStyle="{
-                color: '#606266'
-            }" lineColor="#667eea" lineHeight="3px" :scrollable="false" />
+        color: '#606266'
+    }" lineColor="#667eea" lineHeight="3px" :scrollable="false" />
 
     <!-- 内容区域 -->
     <div class="content">
@@ -346,5 +346,4 @@ const rateTrip = (tripId: string) => {
     padding-top: 15px;
     border-top: 1px solid #f4f4f5;
 }
-
 </style>
