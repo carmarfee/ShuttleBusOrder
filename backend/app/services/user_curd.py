@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List, Optional
 
-# 严格按照你的目录结构进行导入
+from app.core.security import get_password_hash
 from app.models import db_models, schemas
 
 # --- 读取操作 (异步) ---
@@ -47,30 +47,48 @@ async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[d
 
 # --- 创建操作 (异步) ---
 
-async def create_user(db: AsyncSession, user: schemas.UserCreate) -> db_models.User:
+async def create_user(db: AsyncSession, user: schemas.UserCreateByAdmin) -> db_models.User:
     """
-    异步创建新用户。
+    异步创建新用户，并使用提供的密码进行哈希。
     """
-    # 将 Pydantic 模型 (user) 的数据解包，创建 SQLAlchemy 模型实例 (db_user)
+    # 1. 为提供的密码生成哈希值
+    hashed_password = get_password_hash(user.password)
+    
+    # 2. 创建数据库模型实例
     db_user = db_models.User(
         id=user.id,
         name=user.name,
-        password = user.password,
+        password=hashed_password, # 存入哈希后的密码
         phone=user.phone,
         role=user.role,
         department=user.department
     )
     db.add(db_user)
-    await db.commit()  # 异步提交
+    await db.commit()
+    
+    # 使用 get_user 重新获取，避免 refresh 的问题
     created_user = await get_user(db, user_id=db_user.id)
     return created_user
+
+# --- delete_user 函数 ---
+async def delete_user(db: AsyncSession, user_id: str) -> bool:
+    """
+    根据用户ID删除一个用户。
+    如果用户存在并被删除，返回 True，否则返回 False。
+    """
+    user_to_delete = await get_user(db, user_id=user_id)
+    if not user_to_delete:
+        return False
+    
+    await db.delete(user_to_delete)
+    await db.commit()
+    return True
+
 
 
 # --- 更新操作 (异步) ---
 
-# app/services/user_curd.py
 
-# ... (其他函数和 imports) ...
 
 async def update_user(
     db: AsyncSession, 
@@ -91,3 +109,29 @@ async def update_user(
     await db.commit()
     await db.refresh(db_user)
     return db_user
+
+
+
+async def update_user_openid(db: AsyncSession, *, db_user: db_models.User, openid: str) -> db_models.User:
+    """
+    为指定的用户对象更新或存储其 OpenID。
+    """
+    # 将新的 openid 赋值给用户对象的 openid 字段
+    db_user.openid = openid
+    
+    # 将更改添加到会话中
+    db.add(db_user)
+    
+    # 提交事务以保存更改
+    await db.commit()
+    
+    # 刷新对象以获取数据库中的最新状态
+    await db.refresh(db_user)
+    
+    return db_user
+
+async def get_all_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[db_models.User]:
+    """异步获取用户列表，支持分页。"""
+    query = select(db_models.User).offset(skip).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()

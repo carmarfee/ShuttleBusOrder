@@ -62,3 +62,19 @@ async def get_current_user(
         
     # 5. 返回数据库中的用户模型对象
     return user
+
+def get_current_admin_user(
+    current_user: db_models.User = Depends(get_current_user)
+) -> db_models.User:
+    """
+    一个依赖项，用于验证当前用户是否为管理员。
+    如果不是管理员，则抛出 HTTP 403 错误。
+    """
+    # 假设管理员的角色名称是 'admin'
+    # 你可以根据需要在 config.py 中将其定义为配置项
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="操作未授权：需要管理员权限"
+        )
+    return current_user

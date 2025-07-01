@@ -50,6 +50,17 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class UserCreateByAdmin(BaseModel):
+    """
+    定义管理员添加新用户时使用的请求体格式。
+    """
+    id: str = Field(..., description="用户ID，学工号")
+    name: str = Field(..., description="用户名称")
+    password: str = Field(..., min_length=6, description="用户初始密码")
+    phone: str = Field(..., description="手机号码 (必需)")
+    role: str = Field(..., description="用户角色 (e.g., student, teacher, admin)")
+    department: Optional[str] = Field(None, description="部门")
+
 
 # ===============================================================
 # auth/login
@@ -253,6 +264,97 @@ class AppointmentRequest(BaseModel):
     user_id: str = Field(..., description="发起预约的用户的ID")
     schedule_id: str = Field(..., description="要预约的班次的ID")
     booking_date: date = Field(..., description="预约的乘车日期，格式为 YYYY-MM-DD")
+    role: str = Field(..., description="预约人身份")
+
+# ===============================================================
+# 存储 OpenID 相关的模型 
+# ===============================================================
+
+class StoreOpenIDRequest(BaseModel):
+    """
+    定义存储 OpenID 接口的请求体格式。
+    """
+    id: str = Field(..., description="用户ID ")
+    openid: str = Field(..., description="从微信获取的用户唯一标识 OpenID")
+
+
+
+
+
+
+# ===============================================================
+# 用户列表相关的模型 (新增部分)
+# ===============================================================
+
+class UserListItem(BaseModel):
+    """定义用户列表中的单个用户信息"""
+    id: str
+    name: str
+    role: str
+    department: Optional[str]
+
+class UserListResponse(BaseModel):
+    """定义获取用户列表接口的响应格式"""
+    userList: List[UserListItem]
+
+
+# ===============================================================
+# 班次列表相关的模型 (新增部分)
+# ===============================================================
+
+class RouteInfoForList(BaseModel):
+    """用于表示路线起止点的内嵌模型"""
+    from_location: str = Field(..., alias='from')
+    to_location: str = Field(..., alias='to')
+    
+    class Config:
+        allow_population_by_field_name = True
+
+class ScheduleListItem(BaseModel):
+    """定义班次列表中的单个班次信息"""
+    vehicleNumber: str
+    route: RouteInfoForList
+    driver: str
+    capacity: int # 返回为整数类型更佳
+    scheduleID: str
+    departureTime: time
+    recurring_pattern: str
+
+class ScheduleListResponse(BaseModel):
+    """定义获取班次列表接口的响应格式"""
+    scheduleList: List[ScheduleListItem]
+
+# ===============================================================
+# 添加班次相关的模型 (新增部分)
+# ===============================================================
+
+class ScheduleCreateRequest(BaseModel):
+    """
+    定义添加新班次接口的请求体格式。
+    使用了别名来匹配前端发送的字段名。
+    """
+    vehicleNumber: str
+    route_id: str = Field(..., alias="route")
+    driver_name: str = Field(..., alias="driver")
+    capacity: int # FastAPI会自动将字符串数字转换为整数
+    scheduleID: str
+    departureTime: time
+    # 以下字段对于创建班次是必需的，但未在您的输入列表中，我已添加为可选
+    # 您可以根据需要将它们改为必需，或在API层提供默认值
+    recurring_pattern: Optional[str] = "周一到周五"
+    departure_location: Optional[str] = "主校区"
+    arrival_location: Optional[str] = "新校区"
+    
+    class Config:
+        allow_population_by_field_name = True
+
+class ScheduleCreateResponse(BaseModel):
+    """
+    定义添加新班次成功后的响应格式。
+    """
+    bus_id: str
+    schedule_id: str
+    message: str = "班车及班次已成功添加"
 
 
 

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import login,get_orderinfo,get_orders,search_busservices,get_dynamics,get_dynamiccontent,get_creditinfo,get_routes,appointment,send_notification
+from app.api.endpoints import login,get_orderinfo,get_orders,search_busservices,get_dynamics,get_dynamiccontent,get_creditinfo,get_routes,appointment,send_notification,store_openid,manager_user,list,add_schedule
 api_router = APIRouter()
 
 api_router.include_router(login.router, prefix="/auth", tags=["Authentication"])
@@ -12,3 +12,7 @@ api_router.include_router(get_creditinfo.router, tags=["获取违约次数"])
 api_router.include_router(get_routes.router, tags=["获取路线信息"])
 api_router.include_router(appointment.router, tags=["预约"])
 api_router.include_router(send_notification.router, tags=["推送消息测试API"])
+api_router.include_router(store_openid.router, tags=["更新openId API"])
+api_router.include_router(manager_user.router, tags=["增删改用户信息"])
+api_router.include_router(list.router, tags=["列表形式获取信息"])
+api_router.include_router(add_schedule.router, tags=["增加班次"])

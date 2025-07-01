@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 from datetime import date
 from typing import List, Any, Optional
 from sqlalchemy.orm import joinedload
-from app.models import db_models
+from app.models import db_models ,schemas
 
 def is_date_in_pattern(target_date: date, pattern: str) -> bool:
     """
@@ -99,3 +99,37 @@ async def get_schedule_by_id_with_bus(
     )
     result = await db.execute(query)
     return result.scalar_one_or_none()
+
+async def get_all_schedules_with_details(db: AsyncSession) -> List[Any]:
+    """
+    异步获取所有班次及其关联的车辆和路线信息。
+    """
+    query = (
+        select(
+            db_models.BusSchedule,
+            db_models.Bus,
+            db_models.Route
+        )
+        # 使用 JOIN 将三个表关联起来
+        .join(db_models.Bus, db_models.BusSchedule.bus_id == db_models.Bus.id)
+        .join(db_models.Route, db_models.Bus.route_id == db_models.Route.id)
+        .order_by(db_models.BusSchedule.departure_time) # 按发车时间排序
+    )
+    result = await db.execute(query)
+    # .all() 会返回一个元组(tuple)的列表，每个元组包含 (Schedule, Bus, Route) 对象
+    return result.all()
+
+
+async def create_schedule(db: AsyncSession, *, schedule_data: schemas.ScheduleCreateRequest, bus_id: str) -> db_models.BusSchedule:
+    """创建一个新的班次记录。"""
+    new_schedule = db_models.BusSchedule(
+        id=schedule_data.scheduleID,
+        bus_id=bus_id,
+        departure_time=schedule_data.departureTime,
+        recurring_pattern=schedule_data.recurring_pattern,
+        departure_location=schedule_data.departure_location,
+        arrival_location=schedule_data.arrival_location
+    )
+    db.add(new_schedule)
+    # 我们将在上层调用中一起 commit
+    return new_schedule

@@ -2,7 +2,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import List
+from typing import List, Optional
 
 from app.models import db_models
 
@@ -24,4 +24,9 @@ async def get_all_routes(db: AsyncSession) -> List[db_models.Route]:
     
     # 返回所有匹配的记录
     return result.scalars().all()
+
+
+async def get_route_by_id(db: AsyncSession, route_id: str) -> Optional[db_models.Route]:
+    """根据ID获取单个路线。"""
+    return await db.get(db_models.Route, route_id)
 

@@ -55,7 +55,7 @@ class User(Base):
     }
     id = Column(String(50), primary_key=True, index=True)
     name = Column(String(50), index=True, nullable=False)
-    password = Column(String(50), index=True, nullable=False)
+    password = Column(String(255),  nullable=False)
     phone = Column(String(20), unique=True, index=True, nullable=False)
     role = Column(String(20), nullable=False, index=True)
     department = Column(String(50), nullable=True, index=True)
